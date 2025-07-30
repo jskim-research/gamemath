@@ -53,7 +53,7 @@ void SoftRenderer::LoadScene2D()
 }
 
 // 게임 로직과 렌더링 로직이 공유하는 변수
-
+Vector2 CurrentPos(0, 0);
 
 // 게임 로직을 담당하는 함수
 void SoftRenderer::Update2D(float InDeltaSeconds)
@@ -63,7 +63,11 @@ void SoftRenderer::Update2D(float InDeltaSeconds)
 	const InputManager& input = g.GetInputManager();
 
 	// 게임 로직의 로컬 변수
+	static float MoveSpeed = 100.f;
 
+	// 입력에 따라 좌표 변환
+	Vector2 InputVector = Vector2(input.GetAxis(InputAxis::XAxis), input.GetAxis(InputAxis::YAxis));
+	CurrentPos += InputVector * MoveSpeed * InDeltaSeconds;
 }
 
 // 렌더링 로직을 담당하는 함수
@@ -77,6 +81,14 @@ void SoftRenderer::Render2D()
 	DrawGizmo2D();
 
 	// 렌더링 로직의 로컬 변수
+
+	// 그리기
+	static float LineLength = 500.f;
+	Vector2 LineStart = CurrentPos * LineLength;
+	Vector2 LineEnd = CurrentPos * -LineLength;
+	r.DrawLine(LineStart, LineEnd, LinearColor::LightGray);
+	r.DrawPoint(CurrentPos, LinearColor::Blue);
+	r.PushStatisticText("Coordinate : " + CurrentPos.ToString());
 
 }
 
