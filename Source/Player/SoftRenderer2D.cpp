@@ -54,6 +54,8 @@ void SoftRenderer::LoadScene2D()
 
 // 게임 로직과 렌더링 로직이 공유하는 변수
 Vector2 currentPosition(100.f, 100.f);
+std::vector<Vector2> CirclePoints;
+float Radius = 50.0f;
 
 // 게임 로직을 담당하는 함수
 void SoftRenderer::Update2D(float InDeltaSeconds)
@@ -70,6 +72,22 @@ void SoftRenderer::Update2D(float InDeltaSeconds)
 
 	// 물체의 최종 상태 설정
 	currentPosition += deltaPosition;
+
+	// CirclePoint 초기 계산
+
+	for (float x = -Radius; x <= Radius; x++)
+	{
+		for (float y = -Radius; y <= Radius; y++)
+		{
+			Vector2 Point(x, y);
+
+			// 제곱근을 사용하지 않아서 속도가 더 빠르다고 함
+			if (Point.SizeSquared() <= Radius * Radius)
+			{
+				CirclePoints.push_back(Point);
+			}
+		}
+	}
 }
 
 // 렌더링 로직을 담당하는 함수
@@ -83,7 +101,12 @@ void SoftRenderer::Render2D()
 	DrawGizmo2D();
 
 	// 렌더링 로직의 로컬 변수
+	for (auto P : CirclePoints)
+	{
+		r.DrawPoint(P + currentPosition, LinearColor::Red);
+	}
 
+	r.PushStatisticText("Coordinate : " + currentPosition.ToString());
 }
 
 // 메시를 그리는 함수
